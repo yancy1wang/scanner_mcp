@@ -1,0 +1,18 @@
+FROM python:3.12-slim
+
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1
+
+WORKDIR /app
+
+# The application uses the MCP 1.x FastMCP API.
+RUN pip install --no-cache-dir "mcp[cli]>=1,<2" httpx
+
+COPY scanner_mcp_server.py .
+
+# Check SDK compatibility without starting the HTTP server.
+RUN python -c "from scanner_mcp_server import mcp"
+
+EXPOSE 8001
+
+CMD ["python", "scanner_mcp_server.py"]
